@@ -1,4 +1,5 @@
 use rand::Rng;
+use std::collections::HashMap;
 
 fn mean(ints: &Vec<i32>) -> f64 {
     let sum: i32 = ints.iter().sum();
@@ -14,7 +15,21 @@ fn median(ints: &Vec<i32>) -> i32 {
 }
 
 fn mode(ints: &Vec<i32>) -> i32 {
-    0
+    let mut counts = HashMap::new();
+    for &i in ints {
+        let count = counts.entry(i).or_insert(0);
+        *count += 1;
+    }
+
+    let mut max_i = 0;
+    let mut max_count = 0;
+    for (i, count) in counts {
+        if count > max_count {
+            max_i = i;
+            max_count = count;
+        }
+    }
+    max_i
 }
 
 fn main() {
