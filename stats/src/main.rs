@@ -7,7 +7,10 @@ fn mean(ints: &Vec<i32>) -> f64 {
 }
 
 fn median(ints: &Vec<i32>) -> i32 {
-    0
+    let mid = ints.len() / 2;
+    let mut sorted = ints.clone();
+    sorted.sort_unstable();
+    sorted[mid]
 }
 
 fn mode(ints: &Vec<i32>) -> i32 {
