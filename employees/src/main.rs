@@ -1,4 +1,5 @@
 use std::io;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 enum Command {
@@ -34,7 +35,17 @@ fn parse(line: String) -> Option<Command> {
     }
 }
 
+fn print_sorted(strings: &Vec<String>) {
+    let mut sorted = strings.clone();
+    sorted.sort();
+    for s in sorted {
+        println!("{}", s);
+    }
+}
+
 fn main() {
+    let mut table = HashMap::new();
+
     loop {
         let mut line = String::new();
         io::stdin().read_line(&mut line)
@@ -42,13 +53,31 @@ fn main() {
         
         if let Some(command) = parse(line) {
             match command {
-                Command::Add(employee, department) => println!("Add \"{}\" to \"{}\"", employee, department),
-                Command::PrintDepartment(department) => println!("Print department \"{}\"", department),
-                Command::PrintAll => println!("Print all"),
+                Command::Add(employee, department) => {
+                    let employees = table.entry(department).or_insert(Vec::new());
+                    employees.push(employee);
+                },
+                Command::PrintDepartment(department) => {
+                    if let Some(employees) = table.get(&department) {
+                        print_sorted(employees);
+                    }
+                    else {
+                        println!("Department does not exist");
+                    }
+                },
+                Command::PrintAll => {
+                    let mut sorted_table: Vec<_> = table.iter().collect();
+                    sorted_table.sort();
+                    for (department, employees) in sorted_table {
+                        println!("[{}]", department);
+                        print_sorted(employees);
+                    }
+                },
                 Command::Quit => break,
             }
-        } else {
-            println!("Wrong format")
+        }
+        else {
+            println!("Wrong command/format");
         }
     }
 }
